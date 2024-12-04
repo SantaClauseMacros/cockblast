@@ -1,74 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Block Blast Solver</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 20px;
-    }
-    input[type="file"] {
-      margin: 20px;
-    }
-    #solution {
-      margin-top: 20px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      display: inline-block;
-      width: 80%;
-      text-align: left;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Blast Solver</title>
+    <!-- Link to Google Fonts for better typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        button {
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        button:hover {
+            background-color: #e64a19;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-gap: 8px;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+
+        .cell {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .cell:hover {
+            transform: scale(1.1);
+        }
+
+        .cell.block-1 {
+            background-color: #1e88e5; /* Blue for L pieces */
+        }
+
+        .cell.block-2 {
+            background-color: #ff7043; /* Red for Square pieces */
+        }
+
+        .cell.empty {
+            background-color: #cfd8dc; /* Light grey for empty cells */
+        }
+
+        footer {
+            font-size: 1rem;
+            color: #fff;
+            margin-top: 20px;
+            opacity: 0.7;
+        }
+    </style>
 </head>
 <body>
-  <h1>Block Blast Solver</h1>
-  <p>Upload a screenshot of your game board:</p>
-  <input type="file" id="imageUpload" accept="image/*">
-  <button id="uploadButton">Upload and Solve</button>
-
-  <div id="solution" hidden>
-    <h2>Solution</h2>
-    <pre id="solutionText">Analyzing...</pre>
-  </div>
-
-  <script>
-    const uploadButton = document.getElementById('uploadButton');
-    const solutionDiv = document.getElementById('solution');
-    const solutionText = document.getElementById('solutionText');
-
-    uploadButton.addEventListener('click', async () => {
-      const fileInput = document.getElementById('imageUpload');
-      const file = fileInput.files[0];
-
-      if (!file) {
-        alert("Please upload an image!");
-        return;
-      }
-
-      // Display loading message
-      solutionDiv.hidden = false;
-      solutionText.textContent = "Analyzing...";
-
-      // Send the image to the backend
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await fetch('/.netlify/functions/solver', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        solutionText.textContent = result.solution;
-      } else {
-        solutionText.textContent = "Error: Could not analyze the image.";
-      }
-    });
-  </script>
+    <h1>Block Blast Solver</h1>
+    <button onclick="solve()">Solve Puzzle</button>
+    <div id="grid" class="grid"></div>
+    <footer>
+        <p>&copy; 2024 Block Blast Solver. All Rights Reserved.</p>
+    </footer>
+    
+    <script src="script.js"></script>
 </body>
 </html>
