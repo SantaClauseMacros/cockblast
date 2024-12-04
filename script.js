@@ -1,33 +1,32 @@
-const uploadButton = document.getElementById('uploadButton');
-const solutionDiv = document.getElementById('solution');
-const solutionText = document.getElementById('solutionText');
+async function solve() {
+    // Fetch solution from Netlify Function
+    const response = await fetch('/.netlify/functions/solver', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}), // Send data if needed
+    });
+    const data = await response.json();
 
-uploadButton.addEventListener('click', async () => {
-  const fileInput = document.getElementById('imageUpload');
-  const file = fileInput.files[0];
+    // Get the grid element
+    const gridElement = document.getElementById('grid');
+    gridElement.innerHTML = ''; // Clear previous grid
 
-  if (!file) {
-    alert("Please upload an image!");
-    return;
-  }
+    // Render the 8x8 grid
+    data.grid.forEach(row => {
+        row.forEach(cell => {
+            const cellElement = document.createElement('div');
+            cellElement.classList.add('cell');
 
-  // Display loading message
-  solutionDiv.hidden = false;
-  solutionText.textContent = "Analyzing...";
+            // Add different classes based on cell value
+            if (cell === 1) {
+                cellElement.classList.add('block-1'); // Blue for 'L' piece
+            } else if (cell === 2) {
+                cellElement.classList.add('block-2'); // Red for 'Square' piece
+            } else {
+                cellElement.classList.add('empty'); // Light grey for empty cells
+            }
 
-  // Send the image to the backend
-  const formData = new FormData();
-  formData.append('file', file);
-
-  const response = await fetch('/.netlify/functions/solver', {
-    method: 'POST',
-    body: formData,
-  });
-
-  if (response.ok) {
-    const result = await response.json();
-    solutionText.textContent = result.solution;
-  } else {
-    solutionText.textContent = "Error: Could not analyze the image.";
-  }
-});
+            gridElement.appendChild(cellElement);
+        });
+    });
+}
